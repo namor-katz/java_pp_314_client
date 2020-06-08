@@ -22,7 +22,6 @@ public class UserServiceRest implements UserService {
 
     @Override
     public List<User> allUsers() {
-//        System.out.println("мое ёбаный адрес есть " + serverUrl);
        return restTemplate.exchange(
                serverUrl + "/api/v1/users",
                HttpMethod.GET,

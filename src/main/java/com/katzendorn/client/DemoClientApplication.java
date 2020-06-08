@@ -1,7 +1,6 @@
 package com.katzendorn.client;
 
 import com.katzendorn.client.service.UserService;
-import com.katzendorn.client.service.UserServiceRest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
