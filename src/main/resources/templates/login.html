@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="namor" content="Training page">
+    <title>Login page</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.css" th:href="@{css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template -->
+    <link href="../static/src/signin.css" th:href="@{css/signin.css}" rel="stylesheet" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="container">
+    <!--<p th:if="${loginError}" class="error">Wrong user or password</p>-->
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="h3 col-3 font-weight-normal text-center font-weight-bold py-0 my-0">
+            <strong>&nbsp;&nbsp; Please sign in</strong>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <form th:action="@{login}" method="post" class="form-signin py-1 my-1">
+                <label for="username" class="sr-only">Input login</label>
+                <input type="text" id="username" name="username" autofocus="autofocus" placeholder="login" class="form-control"/>
+
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" placeholder="password" class="form-control" required>
+
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
