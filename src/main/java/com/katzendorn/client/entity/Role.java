@@ -1,9 +1,17 @@
-package com.katzendorn.client.service;
+package com.katzendorn.client.entity;
 
 public class Role {
     private Long id;
 
     private String name;
+
+    //constructors
+    public Role () {};
+
+    public Role(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     //getters and setters
 

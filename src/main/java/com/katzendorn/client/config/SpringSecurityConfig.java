@@ -1,5 +1,7 @@
 package com.katzendorn.client.config;
 
+import com.katzendorn.client.entity.Role;
+import com.katzendorn.client.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,10 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.katzendorn.client.config.handler.LoginSuccessHandler;
 
+import java.util.Set;
+
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Autowired
-//    UserService userService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -29,7 +31,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("/registration").not().fullyAuthenticated()
                 .antMatchers("/api/v1/**").permitAll()  //!! сменить на только для одминов!
-                .antMatchers("/", "/login", "/static/**/*", "/css/**").permitAll()  //dвот зе фак?
+                .antMatchers("/", "/login", "/static/**/*", "/css/**", "/js/**").permitAll()  //dвот зе фак?
                 .antMatchers("/admin/**", "/registration").permitAll()             //hasRole("ADMIN")
                 .antMatchers("/user").hasRole("USER")
                 //use authentification
@@ -59,14 +61,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/**", "/static/**/*","/webjars/**", "/static/css/*");
     }
 
-
+/*
     public void registerGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        User admin = new User(1L, "admin", "123", "a@mail.ru", 125, (Set<Role>) new Role(1L, "ADMIN"));
         auth
                 .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER").and()
-                .withUser("admin").password("password").roles("USER","ADMIN", "ADMIN_ROLES");
+                .withUser("admin").password("password").roles("USER","ADMIN", "ADMIN_ROLES").and()
+        .withUser((admin.getUsername()).password(admin.getPassword()).roles(admin.getRoles()));
     }
-
+*/
 /*
     @Autowired
     protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

@@ -1,6 +1,6 @@
 package com.katzendorn.client;
 
-import com.katzendorn.client.service.UserService;
+import com.katzendorn.client.service.UserServiceRest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -16,7 +16,7 @@ public class DemoClientApplication {
 
     public static void main(String[] args) throws InterruptedException {
         ApplicationContext ctx = SpringApplication.run(DemoClientApplication.class, args);
-        UserService userService = ctx.getBean(UserService.class);
+        UserServiceRest userService = ctx.getBean(UserServiceRest.class);
 
 //        System.out.println("юзера, блядь ");
         userService.allUsers().forEach(user -> System.out.println(user.getUsername()));

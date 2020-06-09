@@ -118,7 +118,7 @@
 -->
 <script type="text/javascript">
     $(function () {
-        $.get('/api/v1/users', "json").done(function (users) {
+        $.get('http://localhost:8080/api/v1/users', "json").done(function (users) {
             users.forEach(function (user) {
                 $('tbody').append(`
                     <tr>

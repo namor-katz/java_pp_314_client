@@ -29,7 +29,7 @@
 <div class="container-fluid" th:fragment="header (onevar, twovar)"> <!-- Role, mail -->
     <header class="row text-white bg-dark">
         <!-- истерику идеи по поводу authority - игнорировать! всё работает! -->
-        <div class="col-md-9  text-white h2 text-left bg-dark" th:each="role : ${onevar}" th:text="${twovar} + ' with roles: ' + ${role.authority}">with roles: admin, user</div>
+        <div class="col-md-9  text-white h2 text-left bg-dark" th:each="role : ${onevar}" th:text="${twovar} + ' with roles: '">with roles: admin, user</div>
         <div class="col-md-3 text-right bg-dark align-text-bottom  my-auto"><a href="/logout">Logout</a></div>
         <!--  гиперссылка не переезжает вниз, не позиционируется по центру вертикально. игнорирует свойства выставляемые в контейнере -->
         <!-- не работает выставление цвета текста для гиперссылки -->
