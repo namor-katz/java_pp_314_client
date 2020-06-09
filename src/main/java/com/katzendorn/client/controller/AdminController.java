@@ -18,7 +18,9 @@ public class AdminController {
 
     @GetMapping(value = "list")
     public String listPage(ModelMap model) {
-        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("Зашёл в админ контроллер!");
+//        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();    //ни магу скастовать ин меморю к юзеру!! арря!
+        User principal = new User("Vasy", "e@vas", "ADMIN_role");
         model.addAttribute("you", principal);
         return "list";
     }

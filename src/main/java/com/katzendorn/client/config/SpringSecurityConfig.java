@@ -1,8 +1,5 @@
 package com.katzendorn.client.config;
 
-import com.katzendorn.client.service.UserService;
-import com.katzendorn.client.service.UserServiceRest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,8 +29,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("/registration").not().fullyAuthenticated()
                 .antMatchers("/api/v1/**").permitAll()  //!! сменить на только для одминов!
-                .antMatchers("/", "/login", "/static/**/*").permitAll()
-                .antMatchers("/admin/**", "/registration").hasRole("ADMIN")
+                .antMatchers("/", "/login", "/static/**/*", "/css/**").permitAll()  //dвот зе фак?
+                .antMatchers("/admin/**", "/registration").permitAll()             //hasRole("ADMIN")
                 .antMatchers("/user").hasRole("USER")
                 //use authentification
                 .anyRequest().authenticated()
@@ -59,7 +56,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
-                .antMatchers("/resources/**", "/static/**/*","/webjars/**", "/css/*");
+                .antMatchers("/resources/**", "/static/**/*","/webjars/**", "/static/css/*");
     }
 
 
@@ -67,7 +64,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER").and()
-                .withUser("admin").password("password").roles("USER","ADMIN");
+                .withUser("admin").password("password").roles("USER","ADMIN", "ADMIN_ROLES");
     }
 
 /*

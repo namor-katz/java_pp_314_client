@@ -1,0 +1,13 @@
+input, textarea{
+    background-color: palegoldenrod;
+    color: #FFF;
+}
+/*:-moz-placeholder { !* Mozilla Firefox 4 to 18 *!*/
+/*    color:    #FFF;*/
+/*}*/
+.form-control::-moz-placeholder {
+    color: ghostwhite;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #FFF;
+}

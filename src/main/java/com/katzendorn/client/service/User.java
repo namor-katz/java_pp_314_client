@@ -1,5 +1,7 @@
 package com.katzendorn.client.service;
 
+import java.util.Set;
+
 public class User {
 
     private Long id;
@@ -11,6 +13,18 @@ public class User {
     private String email;
 
     private int maxweigth;
+
+    private String roles; //??!!
+
+
+    //constructor
+
+    public User(String username, String email, String roles) {
+        this.username = username;
+//        this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
 
 
     //getters and setters
@@ -35,6 +49,9 @@ public class User {
         return maxweigth;
     }
 
+    public String getRoles() {
+        return roles;
+    }
 
     public void setId(Long id) {
         this.id = id;

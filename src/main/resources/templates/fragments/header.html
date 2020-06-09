@@ -1,0 +1,41 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+
+<head th:fragment="common_header(title,links)">
+    <meta charset="UTF-8" />
+    <title th:replace="${title}">The awesome application</title>
+    <!-- COmmon styles and scripts -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- ff -->
+    <th:block th:replace="${links}" />
+    <style>
+        /* только явным прописыванием стиля тут удалось сделать белым. почему? */
+        .text-secondary a:hover,
+        .text-white a:active,
+        .text-white a:visited
+        {
+            color: gray;
+        }
+        caption {
+            caption-side: top; /* Заголовок над таблицей */
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid" th:fragment="header (onevar, twovar)"> <!-- Role, mail -->
+    <header class="row text-white bg-dark">
+        <!-- истерику идеи по поводу authority - игнорировать! всё работает! -->
+        <div class="col-md-9  text-white h2 text-left bg-dark" th:each="role : ${onevar}" th:text="${twovar} + ' with roles: ' + ${role.authority}">with roles: admin, user</div>
+        <div class="col-md-3 text-right bg-dark align-text-bottom  my-auto"><a href="/logout">Logout</a></div>
+        <!--  гиперссылка не переезжает вниз, не позиционируется по центру вертикально. игнорирует свойства выставляемые в контейнере -->
+        <!-- не работает выставление цвета текста для гиперссылки -->
+        <!-- нет фавикона из коропки, не добавляется свой по этой доке https://www.baeldung.com/spring-boot-favicon -->
+    </header>
+</div>
+<!--<nav class=""-->
+</body>
+</html>

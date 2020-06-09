@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: common_header(~{::title}, ~{})">
+    <meta charset="UTF-8">
+    <title>List Users</title>
+</head>
+
+<body>
+<!-- modal begin -->
+
+<div class="modal fade bd-example-modal-lg" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="userForm">
+                    <input type="hidden" name="id" id="id">
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" for="username">Name:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="username" class="form-control" id="username" placeholder="Username"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" for="email">Email:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="email" class="form-control" id="email" placeholder="email"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label" for="maxweight">MaxWeight:</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="maxweight" class="form-control" id="maxweight" placeholder="максимальный вес"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="ajaxSave()">Save changes</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- modal end -->
+<header th:insert="fragments/header :: header (${you.roles}, ${you.email})"></header>
+
+<!--<button type="button" class="btn btn-primary">New User</button>-->
+
+<!--<div class="row"> </div>-->
+<div class="row">
+
+    <div class="col-2 container">		<!-- левый контейнер -->
+        <div class="col-12"></div>
+        <div class="col-12 bg-primary text-white rounded">Admin</div>
+        <div class="col-12">User</div>
+    </div>
+
+    <!-- base panel -->
+    <div class="container col-10 bg-light pb-5">
+        <div class="row">
+            <div class="col-8 h2">Admin panel</div>
+        </div>
+
+        <div class="row mb-0 ml-0">
+            <div class="col-1 border bg-white">
+                Users table
+            </div>
+            <div class="col-2 text-left">
+                <a href="/registration">New User</a>
+            </div>
+        </div>
+
+        <div class="row ml-0 mb-0">
+            <!--        <div class="col-2"></div>-->
+            <div class="col-11 border-top border-right border-left h2 mb-0">All Users</div>
+
+            <div class="col-11 bg-white border">
+                <table class="table table-striped">
+                    <thead>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <!--            <th>Role</th>-->
+                    <th>Email</th>
+                    <th>maxweith</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+    <form id="add" action="#" class="add_form modal" style="display: none;">
+        <div id="msg"/>
+        <h3>Add new user</h3>
+        <p>
+            <label>Username</label>
+            <input type="text" id="usernameOLD" name="username">
+        </p>
+        <input type="submit" id="addNew" value="Submit">
+    </form>
+</div>
+-->
+<script type="text/javascript">
+    $(function () {
+        $.get('/api/v1/users', "json").done(function (users) {
+            users.forEach(function (user) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+<!--                        <td>${user.role}</td>-->
+                        <td>${user.email}</td>
+                        <td>${user.maxweight}</td>
+                        <td>
+                            <button class="edit btn btn-primary" id="edit"  data-id="${user.id}" onclick="ajaxGet(${user.id})">Edit!</button>
+                        </td>
+                        <td>
+                                <button  type="button" class="btn btn-danger" onclick='ajaxDelete(${user.id})'>Delete</button>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+
+    $(document).delegate("#addNew", "click", function (event) {
+        event.preventDefault();
+        var username = $("#username").val();
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "http://localhost:8081/api/v1/user/new",
+            data: JSON.stringify({"username": username}),
+            cache: false,
+            success: function(result) {
+                $("#msg").html( "<span style='color: green'>Company added successfully</span>" );
+                window.setTimeout(function(){location.reload()},1000)
+            },
+            error: function(err) {
+                $("#msg").html( "<span style='color: red'>Name is required</span>" );
+                }
+            }
+        )
+    })
+</script>
+<script type="text/javascript" th:src="@{/js/userAjax.js}"></script>
+</div>
+</body>
+</html>
