@@ -45,4 +45,18 @@ public class UserRestController {
         userServiceRest.saveUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+
+    @ApiOperation(value = "Delete user by id", code = 204)
+    @ApiResponses(value = {@ApiResponse(code = 204, message = "Delete completed")})
+    @DeleteMapping(value = "user/delete/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id) {
+        User user = userServiceRest.findUserById(id);
+        if(user.getUsername() == null) {
+            System.out.println("don't find user");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        userServiceRest.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
