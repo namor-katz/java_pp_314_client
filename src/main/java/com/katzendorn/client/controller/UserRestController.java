@@ -3,7 +3,12 @@ package com.katzendorn.client.controller;
 import com.katzendorn.client.entity.User;
 import com.katzendorn.client.service.UserServiceRest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,5 +34,15 @@ public class UserRestController {
         User user = userServiceRest.findUserById(id0);
         user.setPassword(null);
         return user;
+    }
+
+    @ApiOperation(value = "create new User", code = 201, response = User.class)
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Succesfully created user")})
+    @PostMapping(value = "user/new", consumes = {"application/json"})
+    public ResponseEntity<User> createNewUser(@RequestBody User user) {
+        System.out.println("this UserRestController, а я и есть юзер " + user.getUsername());
+        user.setId(null);
+        userServiceRest.saveUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
