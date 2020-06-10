@@ -85,6 +85,16 @@ public class UserServiceRest implements UserDetailsService {
         return true;
     }
 
+    public void updateUser(User user) {
+        String putUrl = serverUrl + "/api/v1/user/update/" + user.getId();
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            restTemplate.put(putUrl, user, User.class);
+        } catch (Exception e) {
+            System.out.println("что то пошло не так, сохранить изменени в пользователе не удалось!");
+        }
+    }
+
     public boolean deleteUser(Long id) {
         System.out.println("пробую удалить юзера с id " + id);
         String urlFromUserDelete = serverUrl + "/api/v1/user/delete/" + id;

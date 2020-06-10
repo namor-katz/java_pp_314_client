@@ -1,5 +1,6 @@
 package com.katzendorn.client.controller;
 
+import com.katzendorn.client.entity.Role;
 import com.katzendorn.client.entity.User;
 import com.katzendorn.client.service.UserServiceRest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,5 +60,31 @@ public class UserRestController {
         }
         userServiceRest.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @PutMapping("user/update/{id}")
+    @ApiOperation(value = "Update exixting user", code = 202, response = User.class)
+    @ApiResponses(value = {@ApiResponse(code = 202, message = "Update accepted")})
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
+//        System.out.println(user.getId() + " " + user.getUsername() + " " + user.getEmail() + " вес " + user.getMaxweight());
+        Long id0 = Long.parseLong(id);
+        User userOfDb = userServiceRest.findUserById(id0);
+        Set<Role> roles  = userOfDb.getRoles();
+        //!!
+        String password = userOfDb.getPassword();
+        System.out.println(password);
+        //!!
+        if(userOfDb.getUsername() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        //!! требуется логика проверок, либо забить и юзать просто поля из формы.
+        user.setId(id0);
+        user.setRoles(roles);
+        user.setPassword(password);
+        System.out.println(user.getUsername() + "это новое имя");
+        userServiceRest.updateUser(user);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
