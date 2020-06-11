@@ -1,9 +1,13 @@
 package com.katzendorn.client.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.katzendorn.client.entity.User;
 import com.katzendorn.client.entity.Role;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -15,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +33,17 @@ public class UserServiceRest implements UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    //try base authentication in headers
+    HttpHeaders createHeaders(String username, String password){
+        return new HttpHeaders() {{
+            String auth = username + ":" + password;
+            byte[] encodedAuth = Base64.encodeBase64(
+                    auth.getBytes(Charset.forName("US-ASCII")) );
+            String authHeader = "Basic " + new String( encodedAuth );
+            set( "Authorization", authHeader );
+        }};
+    }
+
     //новая фишка. берется переменная из настроечного файла.
     public UserServiceRest(RestTemplate restTemplate, @Value("${application.server.url}") String serverUrl) {
         this.restTemplate = restTemplate;
@@ -34,24 +51,38 @@ public class UserServiceRest implements UserDetailsService {
     }
 
     public List<User> allUsers() {
-        System.out.println("run allUsers ");
+        //try base authentication from rest api. Require support in server.
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        HttpEntity<String> request = new HttpEntity<>(hh);
+
        return restTemplate.exchange(
                serverUrl + "/api/v1/users",
                HttpMethod.GET,
-               null,
+               request,
                new ParameterizedTypeReference<List<User>>() {
                }
        ).getBody();
     }
 
     public User findUserById(Long id) {
+        /*
+        String plainCreds = "roman:logrys7";
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        String base64Creds = new String(base64CredsBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + base64Creds);
+         */
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        HttpEntity<String> request = new HttpEntity<>(hh);
+
         User user = null;
         RestTemplate restTemplate = new RestTemplate();
         String urlFromGetUserById = serverUrl + "/api/v1/user/info/" + id;
-        System.out.println(urlFromGetUserById + " тут дёргаю данные по id!");
         try {
-            user = restTemplate.getForObject(urlFromGetUserById, User.class);
-            return user;
+//            user = restTemplate.getForObject(urlFromGetUserById, User.class);
+            User u = restTemplate.exchange(urlFromGetUserById, HttpMethod.GET, request, User.class).getBody();
+            return u;
         } catch (Exception e) {
             System.out.println("Don't find user!");
             return user;
@@ -59,11 +90,15 @@ public class UserServiceRest implements UserDetailsService {
     }
 
     public User getUserByName(String name) {
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        HttpEntity<String> request = new HttpEntity<>(hh);
+
         RestTemplate restTemplate = new RestTemplate();
         String serverUrlByGetByName = serverUrl + "/api/v1/user/info2/" + name;
         User user = null;
         try {
-            user = restTemplate.getForObject(serverUrlByGetByName, User.class);
+            //user = restTemplate.getForObject(serverUrlByGetByName, User.class);
+            user = restTemplate.exchange(serverUrlByGetByName, HttpMethod.GET, request, User.class).getBody();
         } catch (Exception e ) {
             System.out.println("данный пользователь не обнаружен!");
         }
@@ -71,19 +106,41 @@ public class UserServiceRest implements UserDetailsService {
     }
 
     public boolean saveUser(User user) {
-        User userFormDB = getUserByName(user.getUsername());    //аналог стр 56
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        hh.setContentType(MediaType.APPLICATION_JSON);
+
+        String json = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            json = mapper.writeValueAsString(user);
+            System.out.println("я джейсон. " + json);
+        } catch (JsonProcessingException e) {
+            System.out.println("джейсон стетхем, отхватил по еблу");
+        }
+
+        HttpEntity<String> request = new HttpEntity<>(json, hh);
+
+
+        User userFormDB = getUserByName(user.getUsername());
 
         if(userFormDB != null) {
             return false;
         }
-        String postUrl = serverUrl + "/api/v1/user/new";
+        String saveUrl = serverUrl + "/api/v1/user/new";
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         RestTemplate restTemplate = new RestTemplate();
-        User addedUser = restTemplate.postForObject(postUrl, user, User.class);
-
-        return true;
+//        User addedUser = restTemplate.postForObject(postUrl, user, User.class);
+        try {
+            restTemplate.exchange(saveUrl, HttpMethod.POST, request, User.class);
+            return true;
+        } catch (Exception e) {
+            System.out.println("увы, сохранение не удалось!");
+            e.printStackTrace();
+            return false;
+        }
     }
+
 
     public void updateUser(User user) {
         String putUrl = serverUrl + "/api/v1/user/update/" + user.getId();
@@ -96,13 +153,15 @@ public class UserServiceRest implements UserDetailsService {
     }
 
     public boolean deleteUser(Long id) {
-        System.out.println("пробую удалить юзера с id " + id);
         String urlFromUserDelete = serverUrl + "/api/v1/user/delete/" + id;
         RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        HttpEntity<String> request = new HttpEntity<>(hh);
         try {
-            restTemplate.delete(urlFromUserDelete);
+            restTemplate.exchange(urlFromUserDelete, HttpMethod.DELETE, request, User.class);
             return true;
         } catch ( Exception e) {
+            System.out.println("удаление не удалось.");
             return false;
         }
     }
