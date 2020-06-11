@@ -9,7 +9,6 @@ public class LoginController {
 
     @RequestMapping("/login")
     public String login() {
-        System.out.println("страница логина запрошена успешно!");
         return "login";
     }
 

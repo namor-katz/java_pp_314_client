@@ -97,7 +97,6 @@ public class UserServiceRest implements UserDetailsService {
         String serverUrlByGetByName = serverUrl + "/api/v1/user/info2/" + name;
         User user = null;
         try {
-            //user = restTemplate.getForObject(serverUrlByGetByName, User.class);
             user = restTemplate.exchange(serverUrlByGetByName, HttpMethod.GET, request, User.class).getBody();
         } catch (Exception e ) {
             System.out.println("данный пользователь не обнаружен!");
@@ -147,7 +146,7 @@ public class UserServiceRest implements UserDetailsService {
         try {
             json = mapper.writeValueAsString(user);
         } catch (JsonProcessingException e) {
-            System.out.println("юзер апдейт, преобразование юзера в json failed");
+            System.out.println("updateUser, преобразование юзера в json failed");
         }
 
         HttpEntity<String> request = new HttpEntity<>(json, hh);
@@ -155,10 +154,9 @@ public class UserServiceRest implements UserDetailsService {
         String putUrl = serverUrl + "/api/v1/user/update/" + user.getId();
         RestTemplate restTemplate = new RestTemplate();
         try {
-            //restTemplate.put(putUrl, user, User.class);
             restTemplate.exchange(putUrl, HttpMethod.PUT, request, User.class);
         } catch (Exception e) {
-            System.out.println("что то пошло не так, сохранить изменени в пользователе не удалось!");
+            System.out.println("что то пошло не так, сохранить изменения в пользователе не удалось!");
         }
     }
 
@@ -176,11 +174,8 @@ public class UserServiceRest implements UserDetailsService {
         }
     }
 
-    @Override   //!! edit! add method!
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = restTemplate.exchange(
-//                serverUrl + "/api/v1/users/info"
-//        )
         return null;
     }
 }

@@ -18,7 +18,6 @@ public class DemoClientApplication {
         ApplicationContext ctx = SpringApplication.run(DemoClientApplication.class, args);
         UserServiceRest userService = ctx.getBean(UserServiceRest.class);
 
-//        System.out.println("юзера, блядь ");
         userService.allUsers().forEach(user -> System.out.println(user.getUsername()));
     }
 }

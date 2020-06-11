@@ -42,7 +42,6 @@ public class UserRestController {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Succesfully created user")})
     @PostMapping(value = "user/new", consumes = {"application/json"})
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
-        System.out.println("this UserRestController, а я и есть юзер " + user.getUsername());
         user.setId(null);
         userServiceRest.saveUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -67,23 +66,20 @@ public class UserRestController {
     @ApiOperation(value = "Update exixting user", code = 202, response = User.class)
     @ApiResponses(value = {@ApiResponse(code = 202, message = "Update accepted")})
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
-//        System.out.println(user.getId() + " " + user.getUsername() + " " + user.getEmail() + " вес " + user.getMaxweight());
         Long id0 = Long.parseLong(id);
         User userOfDb = userServiceRest.findUserById(id0);
         Set<Role> roles  = userOfDb.getRoles();
-        //!!
+
         String password = userOfDb.getPassword();
         System.out.println(password);
-        //!!
+
         if(userOfDb.getUsername() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        //!! требуется логика проверок, либо забить и юзать просто поля из формы.
         user.setId(id0);
         user.setRoles(roles);
         user.setPassword(password);
-        System.out.println(user.getUsername() + "это новое имя");
         userServiceRest.updateUser(user);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
