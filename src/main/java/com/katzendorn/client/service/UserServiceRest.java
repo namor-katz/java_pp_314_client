@@ -113,13 +113,11 @@ public class UserServiceRest implements UserDetailsService {
         ObjectMapper mapper = new ObjectMapper();
         try {
             json = mapper.writeValueAsString(user);
-            System.out.println("я джейсон. " + json);
         } catch (JsonProcessingException e) {
-            System.out.println("джейсон стетхем, отхватил по еблу");
+            System.out.println("не удалось конвертировать объект в json");
         }
 
         HttpEntity<String> request = new HttpEntity<>(json, hh);
-
 
         User userFormDB = getUserByName(user.getUsername());
 
@@ -130,7 +128,6 @@ public class UserServiceRest implements UserDetailsService {
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         RestTemplate restTemplate = new RestTemplate();
-//        User addedUser = restTemplate.postForObject(postUrl, user, User.class);
         try {
             restTemplate.exchange(saveUrl, HttpMethod.POST, request, User.class);
             return true;
@@ -143,10 +140,23 @@ public class UserServiceRest implements UserDetailsService {
 
 
     public void updateUser(User user) {
+        HttpHeaders hh = createHeaders("roman", "logrys7");
+        hh.setContentType(MediaType.APPLICATION_JSON);
+        String json = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            json = mapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            System.out.println("юзер апдейт, преобразование юзера в json failed");
+        }
+
+        HttpEntity<String> request = new HttpEntity<>(json, hh);
+
         String putUrl = serverUrl + "/api/v1/user/update/" + user.getId();
         RestTemplate restTemplate = new RestTemplate();
         try {
-            restTemplate.put(putUrl, user, User.class);
+            //restTemplate.put(putUrl, user, User.class);
+            restTemplate.exchange(putUrl, HttpMethod.PUT, request, User.class);
         } catch (Exception e) {
             System.out.println("что то пошло не так, сохранить изменени в пользователе не удалось!");
         }
